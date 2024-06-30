@@ -240,13 +240,17 @@ show_red_screen = False
 red_screen_start_time = 0
 RED_SCREEN_DURATION = 0.5
 
+# Load background image
+background_image = pygame.image.load(r'C:\Users\julikoch\Workplace\tradeshow\background.jpg').convert()
+background_image = pygame.transform.scale(background_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
+
 while running:
-    screen.fill(WHITE)
-    
+    screen.blit(background_image, (0, 0))  # Blit the background image first
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        
+
         if game_state == START_SCREEN:
             if event.type == pygame.KEYDOWN:
                 # Handle keyboard input
@@ -259,7 +263,7 @@ while running:
                         input_text = ""
                 else:
                     input_text += event.unicode
-        
+
         elif game_state == GAME_RUNNING:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_BACKSPACE:
@@ -300,19 +304,19 @@ while running:
         elif game_state == SHOW_LEADERBOARD:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
                 game_state = START_SCREEN
-    
+
     if game_state == START_SCREEN:
         screen.blit(start_button_image, (SCREEN_WIDTH // 2 - CODE_WIDTH // 2, SCREEN_HEIGHT // 2 - CODE_HEIGHT // 2))
         input_text_surface = font.render(input_text, True, BLACK)
         screen.blit(input_text_surface, (10, 10))
-    
+
     elif game_state == GAME_RUNNING:
         if show_green_screen:
             if time.time() - green_screen_start_time < GREEN_SCREEN_DURATION:
                 screen.fill(GREEN)
             else:
                 show_green_screen = False
-        
+
         if show_red_screen:
             if time.time() - red_screen_start_time < RED_SCREEN_DURATION:
                 screen.fill(RED)
@@ -324,7 +328,7 @@ while running:
         screen.blit(code_text_surface, (x, y + CODE_HEIGHT + 10))
         input_text_surface = font.render(input_text, True, BLACK)
         screen.blit(input_text_surface, (10, 10))
-    
+
     elif game_state == GAME_OVER:
         time_taken = end_time - start_time
         result_text = font.render(f"Time: {time_taken:.2f} seconds", True, BLACK)
@@ -349,3 +353,4 @@ while running:
     pygame.display.flip()
 
 pygame.quit()
+   
