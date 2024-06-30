@@ -25,14 +25,11 @@ WIDTH, HEIGHT = screen.get_size()
 pygame.mixer.pre_init(44100, -16, 2, 512)
 pygame.mixer.init()
 
-# Path to the keys directory
-keys_dir = os.path.join(os.path.dirname(__file__), 'keys')
-
 # Load sounds
 sounds = {}
 for idx in range(24):
     key_code = f"KEY{idx+1:02d}"
-    file_path = os.path.join(keys_dir, f"key{idx+1:02d}.mp3")
+    file_path = f"keys/key{idx+1:02d}.mp3"
     if not os.path.isfile(file_path):
         raise FileNotFoundError(f"No file '{file_path}' found in working directory.")
     sounds[key_code] = pygame.mixer.Sound(file_path)
@@ -69,12 +66,19 @@ while running:
                     sounds[key].play()
 
     # Draw everything
+
     screen.fill(WHITE)
     for idx, code in enumerate(codes):
         datamatrix_image = datamatrix_images[code]
         x = (idx % COLUMNS) * (WIDTH // COLUMNS) + (WIDTH // COLUMNS - datamatrix_image.get_width()) // 2
         y = (idx // COLUMNS) * (HEIGHT // 4) + (HEIGHT // 4 - datamatrix_image.get_height()) // 2
         screen.blit(datamatrix_image, (x, y))
+        
+        # Draw the code value below the DataMatrix image
+        text_surface = font.render(code, True, BLACK)
+        text_x = x + (datamatrix_image.get_width() - text_surface.get_width()) // 2
+        text_y = y + datamatrix_image.get_height() + 5  # Small margin below the image
+        screen.blit(text_surface, (text_x, text_y))
 
     pygame.display.flip()
     pygame.time.Clock().tick(30)
